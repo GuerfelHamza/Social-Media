@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Media</title>
+    <!-- ====== BOOTSTRAP CSS ====== -->
+    <link
+      rel="stylesheet"
+      href="node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <!-- ====== BOOTSTRAP JS ====== -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ====== BOOTSTRAP ICONS ====== -->
+    <link
+      rel="stylesheet"
+      href="node_modules/bootstrap-icons/font/bootstrap-icons.css"
+    />
+
+    <!-- ====== CSS PERSO ====== -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- ====== JS PERSO ====== -->
+    <script defer src="main.js"></script>
+  </head>
+  <body class="container py-3">
+    <!-- ====== NAVBAR ====== -->
+    <nav class="navbar navbar-expand-lg bg-light rounded shadow-sm mb-4">
+      <div class="container-fluid">
+        <!-- Logo / titre -->
+        <a class="navbar-brand fw-bold" href="#">Social Media</a>
+        <!-- Bouton burger (mobile) -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#nav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Liens navigation -->
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Home</a>
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+          </ul>
+          <!-- Boutons login/register -->
+          <div>
+            <button class="btn btn-outline-success me-2">Login</button>
+            <button class="btn btn-success">Register</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ====== SECTION POSTS ====== -->
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <!-- ====== UN POST ====== -->
+        <div class="card shadow-sm mb-4">
+          <!-- Header du post -->
+          <div class="card-header bg-white d-flex align-items-center">
+            <img
+              src="./profile-pics/user.png"
+              alt="user"
+              class="rounded-circle me-2"
+              width="35"
+              height="35"
+            />
+            <strong>@username</strong>
+          </div>
+          <!-- Contenu du post -->
+          <div class="card-body">
+            <!-- Image principale -->
+            <img
+              src="./profile-pics/2.webp"
+              alt="post"
+              class="w-100 mb-3"
+              style="height: 300px; object-fit: cover"
+            />
+            <!-- Infos du post -->
+            <h6 class="text-muted">2 min ago</h6>
+            <h4>Metro in Paris</h4>
+            <p>
+              This is a wider card with supporting text below as a natural
+              lead-in to additional content.
+            </p>
+
+            <!-- Boutons d’action -->
+            <i class="bi bi-heart btn-like me-3"></i>
+            <i
+              class="bi bi-chat-dots me-3 text-secondary"
+              style="font-size: 1.5rem"
+            ></i>
+            <i class="bi bi-share text-secondary" style="font-size: 1.5rem"></i>
+          </div>
+          <!-- Footer du post -->
+          <div class="card-footer text-muted small">2 comments, 5 likes</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
