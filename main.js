@@ -6,3 +6,4 @@ document.querySelectorAll(".btn-like").forEach((btn) => {
     btn.classList.toggle("bi-heart-fill"); // alterne icône coeur rempli
   });
 });
+//  ==== AXIOS GET POSTS ======

@@ -19,8 +19,11 @@
 
     <!-- ====== CSS PERSO ====== -->
     <link rel="stylesheet" href="style.css" />
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- ====== JS PERSO ====== -->
-    <script defer src="main.js"></script>
+    <script type="module" defer src="main.js"></script>
+    <script type="module" defer src="axios.js"></script>
   </head>
   <body class="container py-3">
     <!-- ====== NAVBAR ====== -->
@@ -56,45 +59,11 @@
 
     <!-- ====== SECTION POSTS ====== -->
     <div class="row justify-content-center">
-      <div class="col-md-8">
+      <div class="col-md-8" id="posts-container">
         <!-- ====== UN POST ====== -->
         <div class="card shadow-sm mb-4">
           <!-- Header du post -->
-          <div class="card-header bg-white d-flex align-items-center">
-            <img
-              src="./profile-pics/user.png"
-              alt="user"
-              class="rounded-circle me-2"
-              width="35"
-              height="35"
-            />
-            <strong>@username</strong>
-          </div>
-          <!-- Contenu du post -->
-          <div class="card-body">
-            <!-- Image principale -->
-            <img
-              src="./profile-pics/2.webp"
-              alt="post"
-              class="w-100 mb-3"
-              style="height: 300px; object-fit: cover"
-            />
-            <!-- Infos du post -->
-            <h6 class="text-muted">2 min ago</h6>
-            <h4>Metro in Paris</h4>
-            <p>
-              This is a wider card with supporting text below as a natural
-              lead-in to additional content.
-            </p>
 
-            <!-- Boutons d’action -->
-            <i class="bi bi-heart btn-like me-3"></i>
-            <i
-              class="bi bi-chat-dots me-3 text-secondary"
-              style="font-size: 1.5rem"
-            ></i>
-            <i class="bi bi-share text-secondary" style="font-size: 1.5rem"></i>
-          </div>
           <!-- Footer du post -->
           <div class="card-footer text-muted small">2 comments, 5 likes</div>
         </div>
