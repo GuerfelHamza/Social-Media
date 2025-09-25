@@ -9,38 +9,6 @@ function initLikeButtons() {
   });
 }
 
-// ====== CALCUL "time ago" ======
-function timeAgo(dateString) {
-  const past = new Date(dateString);
-  const now = new Date();
-  const seconds = Math.floor((now - past) / 1000);
-
-  const intervals = {
-    year: 31536000,
-    month: 2592000,
-    week: 604800,
-    day: 86400,
-    hour: 3600,
-    minute: 60,
-  };
-
-  for (let key in intervals) {
-    const value = Math.floor(seconds / intervals[key]);
-    if (value >= 1) {
-      return `${value} ${key}${value > 1 ? "s" : ""} ago`;
-    }
-  }
-  return "just now";
-}
-
-// ====== METTRE À JOUR LES TEMPS ======
-function updatePostTimes() {
-  document.querySelectorAll(".post-time").forEach((el) => {
-    const originalTime = el.getAttribute("data-created-at");
-    el.textContent = timeAgo(originalTime);
-  });
-}
-
 // ==== AXIOS GET POSTS ======
 function loadPosts() {
   axios
@@ -65,7 +33,10 @@ function loadPosts() {
           </div>
           <div class="card-body">
             ${post.image ? `<img src="${post.image}" class="w-100 mb-3" style="height: 300px; object-fit: cover" />` : ""}
-            <h6 class="text-muted post-time" data-created-at="${post.created_at}">${timeAgo(post.created_at)}</h6>
+
+            <!-- Date de création depuis l'API -->
+            <h6 class="text-muted mb-2">${post.created_at}</h6>
+
             <h4>${post.title || "Sans titre"}</h4>
             <p>${post.body || ""}</p>
 
@@ -83,9 +54,6 @@ function loadPosts() {
 
       // initialiser les likes
       initLikeButtons();
-
-      // mettre à jour les temps toutes les minutes
-      setInterval(updatePostTimes, 60000);
     })
     .catch((error) => {
       console.error("Erreur :", error);
@@ -139,4 +107,3 @@ loadPosts();
 
 // Vérifier si l’utilisateur est déjà connecté
 showUserPage();
-
