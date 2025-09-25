@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Social Media</title>
+
     <!-- ====== BOOTSTRAP CSS ====== -->
     <link
       rel="stylesheet"
@@ -19,15 +20,70 @@
 
     <!-- ====== CSS PERSO ====== -->
     <link rel="stylesheet" href="style.css" />
+
     <!-- axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <!-- ====== JS PERSO ====== -->
     <script type="module" defer src="main.js"></script>
-    <script type="module" defer src="axios.js"></script>
   </head>
   <body class="container py-3">
+    <!-- ====Modal Login==== -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label for="email" class="col-form-label">Email</label>
+                <input type="email" class="form-control" id="email" />
+              </div>
+              <div class="mb-3">
+                <label for="password" class="col-form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button id="btnLogin" type="button" class="btn btn-primary">
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ====Modal==== -->
+
     <!-- ====== NAVBAR ====== -->
-    <nav class="navbar navbar-expand-lg bg-light rounded shadow-sm mb-4">
+    <nav
+      class="container py-3 navbar navbar-expand-lg bg-light rounded shadow-sm mb-4 col-8"
+    >
       <div class="container-fluid">
         <!-- Logo / titre -->
         <a class="navbar-brand fw-bold" href="#">Social Media</a>
@@ -50,7 +106,14 @@
           </ul>
           <!-- Boutons login/register -->
           <div>
-            <button class="btn btn-outline-success me-2">Login</button>
+            <button
+              class="btn btn-outline-success me-2"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              Login
+            </button>
+
             <button class="btn btn-success">Register</button>
           </div>
         </div>
@@ -60,13 +123,7 @@
     <!-- ====== SECTION POSTS ====== -->
     <div class="row justify-content-center">
       <div class="col-md-8" id="posts-container">
-        <!-- ====== UN POST ====== -->
-        <div class="card shadow-sm mb-4">
-          <!-- Header du post -->
-
-          <!-- Footer du post -->
-          <div class="card-footer text-muted small">2 comments, 5 likes</div>
-        </div>
+        <!-- posts ajoutés dynamiquement -->
       </div>
     </div>
   </body>
