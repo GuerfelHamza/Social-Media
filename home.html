@@ -10,22 +10,13 @@
       rel="stylesheet"
       href="node_modules/bootstrap/dist/css/bootstrap.min.css"
     />
-    <!-- ====== BOOTSTRAP JS ====== -->
-    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <!-- ====== BOOTSTRAP ICONS ====== -->
     <link
       rel="stylesheet"
       href="node_modules/bootstrap-icons/font/bootstrap-icons.css"
     />
-
     <!-- ====== CSS PERSO ====== -->
     <link rel="stylesheet" href="style.css" />
-
-    <!-- axios -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <!-- ====== JS PERSO ====== -->
-    <script type="module" defer src="main.js"></script>
   </head>
   <body class="container py-3">
     <!-- ====Modal Login==== -->
@@ -55,11 +46,7 @@
               </div>
               <div class="mb-3">
                 <label for="password" class="col-form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                />
+                <input type="password" class="form-control" id="password" />
               </div>
             </form>
           </div>
@@ -78,16 +65,13 @@
         </div>
       </div>
     </div>
-    <!-- ====Modal==== -->
 
     <!-- ====== NAVBAR ====== -->
     <nav
       class="container py-3 navbar navbar-expand-lg bg-light rounded shadow-sm mb-4 col-8"
     >
       <div class="container-fluid">
-        <!-- Logo / titre -->
         <a class="navbar-brand fw-bold" href="#">Social Media</a>
-        <!-- Bouton burger (mobile) -->
         <button
           class="navbar-toggler"
           type="button"
@@ -96,7 +80,6 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <!-- Liens navigation -->
         <div class="collapse navbar-collapse" id="nav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
@@ -104,17 +87,25 @@
             </li>
             <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
           </ul>
-          <!-- Boutons login/register -->
           <div>
             <button
               class="btn btn-outline-success me-2"
               data-bs-toggle="modal"
               data-bs-target="#exampleModal"
+              id="btnMainLogin"
             >
               Login
             </button>
-
-            <button class="btn btn-success">Register</button>
+            <button class="btn btn-success" id="btnMainRegister">
+              Register
+            </button>
+            <button
+              class="btn btn-outline-danger me-2"
+              id="btnMainLogOut"
+              style="display: none"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
@@ -126,5 +117,12 @@
         <!-- posts ajoutés dynamiquement -->
       </div>
     </div>
+
+    <!-- ====== BOOTSTRAP JS ====== -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ====== AXIOS ====== -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- ====== JS PERSO ====== -->
+    <script type="module" src="main.js"></script>
   </body>
 </html>
