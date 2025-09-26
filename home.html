@@ -7,66 +7,19 @@
 
     <!-- ====== BOOTSTRAP CSS ====== -->
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      href="node_modules/bootstrap/dist/css/bootstrap.min.css"
     />
     <!-- ====== BOOTSTRAP ICONS ====== -->
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
       rel="stylesheet"
-      href="node_modules/bootstrap-icons/font/bootstrap-icons.css"
     />
     <!-- ====== CSS PERSO ====== -->
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="container py-3">
-    <!-- ====Modal Login==== -->
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="email" class="col-form-label">Email</label>
-                <input type="email" class="form-control" id="email" />
-              </div>
-              <div class="mb-3">
-                <label for="password" class="col-form-label">Password</label>
-                <input type="password" class="form-control" id="password" />
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button id="btnLogin" type="button" class="btn btn-primary">
-              Login
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ====== NAVBAR ====== -->
+    <!-- ===== NAVBAR ===== -->
     <nav
       class="container py-3 navbar navbar-expand-lg bg-light rounded shadow-sm mb-4 col-8"
     >
@@ -91,7 +44,7 @@
             <button
               class="btn btn-outline-success me-2"
               data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
+              data-bs-target="#loginModal"
               id="btnMainLogin"
             >
               Login
@@ -99,6 +52,11 @@
             <button class="btn btn-success" id="btnMainRegister">
               Register
             </button>
+            <h6
+              class="d-inline-block me-2"
+              style="display: none"
+              id="usernameDisplay"
+            ></h6>
             <button
               class="btn btn-outline-danger me-2"
               id="btnMainLogOut"
@@ -110,28 +68,128 @@
         </div>
       </div>
     </nav>
-<!-- add -->
-<div class="container mb-4 col-8 text-start">
-  <button class="btn p-0 border-0 bg-transparent">
-    <img src="./profile-pics/add.png" alt="Ajouter" class="img-fluid" style="width: 32px; height: auto;">
-  </button>
-  <button class="btn p-0 border-0 bg-transparent" onClick="window.location.reload();">
-    <img src="./profile-pics/refresh.png" alt="Rafraîchir" class="img-fluid" style="width: 32px; height: auto;">
-  </button>
-</div>
 
+    <!-- ===== Add Post / Refresh Buttons ===== -->
+    <div class="container mb-4 col-8 text-start">
+      <button class="btn p-0 border-0 bg-transparent" id="btnAddPost">
+        <img
+          src="./profile-pics/add.png"
+          alt="Ajouter"
+          class="img-fluid"
+          style="width: 32px; height: auto"
+        />
+      </button>
+      <button
+        class="btn p-0 border-0 bg-transparent"
+        onClick="window.location.reload();"
+      >
+        <img
+          src="./profile-pics/refresh.png"
+          alt="Rafraîchir"
+          class="img-fluid"
+          style="width: 32px; height: auto"
+        />
+      </button>
+    </div>
 
-   
-
- <!-- end add -->
-    <!-- ====== SECTION POSTS ====== -->
+    <!-- ===== SECTION POSTS ===== -->
     <div class="row justify-content-center">
       <div class="col-md-8" id="posts-container">
         <!-- posts ajoutés dynamiquement -->
       </div>
     </div>
 
-    <!-- ====== POPUP VALIDATION LOGIN ====== -->
+    <!-- ===== MODAL LOGIN ===== -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Login</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="button" id="btnLogin" class="btn btn-primary">
+              Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MODAL ADD POST ===== -->
+    <div class="modal fade" id="postModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add a Post</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="postForm">
+              <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" id="title" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label for="body" class="form-label">Description</label>
+                <textarea
+                  id="body"
+                  class="form-control"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="image" class="form-label">Photo</label>
+                <input
+                  type="file"
+                  id="image"
+                  class="form-control"
+                  accept="image/*"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                Submit Post
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== POPUP LOGIN SUCCESS ===== -->
     <div class="overlay" id="loginSuccessPopup">
       <div class="popup">
         <h2>✅ Succès</h2>
@@ -142,11 +200,9 @@
       </div>
     </div>
 
-    <!-- ====== BOOTSTRAP JS ====== -->
-    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- ====== AXIOS ====== -->
+    <!-- ====== BOOTSTRAP + AXIOS ====== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- ====== JS PERSO ====== -->
     <script type="module" src="main.js"></script>
   </body>
 </html>
