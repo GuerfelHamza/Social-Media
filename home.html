@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -110,11 +110,35 @@
         </div>
       </div>
     </nav>
+<!-- add -->
+<div class="container mb-4 col-8 text-start">
+  <button class="btn p-0 border-0 bg-transparent">
+    <img src="./profile-pics/add.png" alt="Ajouter" class="img-fluid" style="width: 32px; height: auto;">
+  </button>
+  <button class="btn p-0 border-0 bg-transparent" onClick="window.location.reload();">
+    <img src="./profile-pics/refresh.png" alt="Rafraîchir" class="img-fluid" style="width: 32px; height: auto;">
+  </button>
+</div>
 
+
+   
+
+ <!-- end add -->
     <!-- ====== SECTION POSTS ====== -->
     <div class="row justify-content-center">
       <div class="col-md-8" id="posts-container">
         <!-- posts ajoutés dynamiquement -->
+      </div>
+    </div>
+
+    <!-- ====== POPUP VALIDATION LOGIN ====== -->
+    <div class="overlay" id="loginSuccessPopup">
+      <div class="popup">
+        <h2>✅ Succès</h2>
+        <p>Connexion réussie. Bienvenue !</p>
+        <button onclick="closeLoginPopup()" class="btn btn-success">
+          Fermer
+        </button>
       </div>
     </div>
 

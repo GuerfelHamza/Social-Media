@@ -32,14 +32,14 @@ function loadPosts() {
             <strong>@${post.author?.username}</strong>
           </div>
           <div class="card-body">
-            ${post.image ? `<img src="${post.image}" class="w-100 mb-3" style="height: 300px; object-fit: cover" />` : ""}
-
-            <!-- Date de création depuis l'API -->
+            ${
+              post.image
+                ? `<img src="${post.image}" class="w-100 mb-3" style="height: 300px; object-fit: cover" />`
+                : ""
+            }
             <h6 class="text-muted mb-2">${post.created_at}</h6>
-
             <h4>${post.title || "Sans titre"}</h4>
             <p>${post.body || ""}</p>
-
             <!-- Boutons -->
             <i class="bi bi-heart btn-like me-3"></i>
             <i class="bi bi-chat-dots me-3 text-secondary" style="font-size: 1.5rem"></i>
@@ -66,17 +66,33 @@ async function login() {
   const password = document.getElementById("password").value;
 
   try {
-    const response = await axios.post("https://tarmeezacademy.com/api/v1/login", {
-      username: email,
-      password: password,
-    });
+    const response = await axios.post(
+      "https://tarmeezacademy.com/api/v1/login",
+      {
+        username: email,
+        password: password,
+      }
+    );
 
-    alert("✅ Login successful !");
+    // récupérer token + user
+    const token = response.data.token;
+    const user = response.data.user;
+
+    // stocker dans localStorage
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    // ✅ Popup succès
+    showLoginPopup();
+
+    // mettre à jour l’UI
     showUserPage();
-    localStorage.setItem("token", response.data.token);
+
+    // Fermer modal bootstrap
     bootstrap.Modal.getInstance(document.getElementById("exampleModal")).hide();
   } catch (error) {
-    alert("❌ Login failed");
+    // ❌ Popup erreur
+    showLoginErrorPopup();
     console.error("Erreur login :", error.response?.data || error.message);
   }
 }
@@ -84,18 +100,45 @@ async function login() {
 // ====== SHOW/HIDE BUTTONS LOGIN/REGISTER/LOGOUT ======
 function showUserPage() {
   const token = localStorage.getItem("token");
-  if (!token) return;
 
-  document.getElementById("btnMainLogin").style.display = "none";
-  document.getElementById("btnMainRegister").style.display = "none";
-  document.getElementById("btnMainLogOut").style.display = "inline-block";
+  if (token) {
+    // connecté
+    document.getElementById("btnMainLogin").style.display = "none";
+    document.getElementById("btnMainRegister").style.display = "none";
+    document.getElementById("btnMainLogOut").style.display = "inline-block";
+  } else {
+    // pas connecté
+    document.getElementById("btnMainLogin").style.display = "inline-block";
+    document.getElementById("btnMainRegister").style.display = "inline-block";
+    document.getElementById("btnMainLogOut").style.display = "none";
+  }
 }
 
 function logOut() {
   localStorage.removeItem("token");
-  document.getElementById("btnMainLogin").style.display = "inline-block";
-  document.getElementById("btnMainRegister").style.display = "inline-block";
-  document.getElementById("btnMainLogOut").style.display = "none";
+  localStorage.removeItem("user");
+  showUserPage();
+}
+
+// ====== POPUP VALIDATION LOGIN ======
+function showLoginPopup() {
+  document.getElementById("loginSuccessPopup").style.display = "flex";
+  // auto close après 3s
+  setTimeout(closeLoginPopup, 3000);
+}
+
+function closeLoginPopup() {
+  document.getElementById("loginSuccessPopup").style.display = "none";
+}
+
+// ====== POPUP ERREUR LOGIN ======
+function showLoginErrorPopup() {
+  document.getElementById("loginErrorPopup").style.display = "flex";
+  setTimeout(closeLoginErrorPopup, 3000);
+}
+
+function closeLoginErrorPopup() {
+  document.getElementById("loginErrorPopup").style.display = "none";
 }
 
 // ====== INITIALISATION ======
@@ -107,3 +150,4 @@ loadPosts();
 
 // Vérifier si l’utilisateur est déjà connecté
 showUserPage();
+
