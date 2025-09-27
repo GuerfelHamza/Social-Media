@@ -1,96 +1,329 @@
-import {
-  showUserPage,
-  login,
-  logOut,
-  register,
-  submitPost,
-  initLikeButtons,
-  initEditButtons,
-  initDeleteButtons,
-  initCommentButtons,
-} from "./shared.js";
+// =======================
+// MAIN.JS (VERSION AVEC SCROLL INFINI ET REGISTER USER)
+// =======================
+
+// ===== CONFIG =====
+const API_URL = "https://tarmeezacademy.com/api/v1";
+let token = localStorage.getItem("token") || null;
+let currentUser = null;
+let selectedPostId = null;
 
 let currentPage = 1;
-let perPage = 20;
-let isLoading = false;
-let totalPosts = 0;
+const postsPerPage = 20;
+let loadingPosts = false;
+let hasMorePosts = true;
 
+// ===== INIT =====
 document.addEventListener("DOMContentLoaded", () => {
-  showUserPage();
-  loadPosts(currentPage);
+  checkLoginState();
+  loadPosts();
 
-  document.getElementById("btnLogin").addEventListener("click", login);
-  document.getElementById("btnMainLogOut").addEventListener("click", logOut);
-  document.getElementById("btnRegister")?.addEventListener("click", register);
-
-  const btnAddPost = document.getElementById("btnAddPost");
-  const postModal = new bootstrap.Modal(document.getElementById("postModal"));
-  btnAddPost.addEventListener("click", () => {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("⚠️ You need to log in to add a post.");
-    postModal.show();
+  // NAVIGATION
+  document.getElementById("navHome").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("posts-container").style.display = "block";
+    document.getElementById("profileStats").style.display = "none";
+    resetPosts();
   });
 
-  document.getElementById("postForm").addEventListener("submit", submitPost);
+  document.getElementById("navProfile").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("posts-container").style.display = "none";
+    document.getElementById("profileStats").style.display = "block";
+    loadProfile();
+  });
+
+  // LOGIN
+  document.getElementById("btnLoginSubmit").addEventListener("click", login);
+
+  // REGISTER
+  document
+    .getElementById("btnRegisterSubmit")
+    .addEventListener("click", register);
+
+  // LOGOUT
+  document.getElementById("btnLogout").addEventListener("click", logout);
+
+  // ADD POST
+  document.getElementById("postForm").addEventListener("submit", addPost);
+
+  // REFRESH
+  document.getElementById("btnRefresh").addEventListener("click", resetPosts);
+
+  // COMMENT
+  document.getElementById("commentForm").addEventListener("submit", addComment);
+
+  // SCROLL INFINI
+  window.addEventListener("scroll", () => {
+    if (
+      window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+      !loadingPosts &&
+      hasMorePosts
+    ) {
+      currentPage++;
+      loadPosts();
+    }
+  });
 });
 
-async function loadPosts(page = 1) {
-  isLoading = true;
+// =======================
+// AUTHENTIFICATION
+// =======================
+
+async function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
   try {
-    const res = await axios.get("https://tarmeezacademy.com/api/v1/posts", {
-      params: { page, limit: perPage },
+    const res = await axios.post(`${API_URL}/login`, { email, password });
+    token = res.data.token;
+    localStorage.setItem("token", token);
+    currentUser = res.data.user;
+    checkLoginState();
+    bootstrap.Modal.getInstance(document.getElementById("loginModal")).hide();
+    document.getElementById("loginSuccessPopup").style.display = "flex";
+  } catch (err) {
+    alert("Erreur login : " + err.response.data.message);
+  }
+}
+
+function closeLoginPopup() {
+  document.getElementById("loginSuccessPopup").style.display = "none";
+}
+
+async function register() {
+  const username = document.getElementById("regUsername").value;
+  const name = document.getElementById("regName")?.value || username;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  try {
+    const res = await axios.post(`${API_URL}/register`, {
+      name: name,
+      username: username,
+      email,
+      password,
     });
+    token = res.data.token;
+    localStorage.setItem("token", token);
+    currentUser = res.data.user;
+    checkLoginState();
+    bootstrap.Modal.getInstance(
+      document.getElementById("registerModal")
+    ).hide();
+  } catch (err) {
+    alert("Erreur inscription : " + err.response.data.message);
+  }
+}
+
+function logout() {
+  token = null;
+  currentUser = null;
+  localStorage.removeItem("token");
+  checkLoginState();
+  resetPosts();
+}
+
+function checkLoginState() {
+  if (token) {
+    document.getElementById("btnLogin").style.display = "none";
+    document.getElementById("btnRegister").style.display = "none";
+    document.getElementById("btnLogout").style.display = "inline-block";
+    document.getElementById("usernameDisplay").style.display = "inline-block";
+    document.getElementById("usernameDisplay").innerText = currentUser?.name;
+  } else {
+    document.getElementById("btnLogin").style.display = "inline-block";
+    document.getElementById("btnRegister").style.display = "inline-block";
+    document.getElementById("btnLogout").style.display = "none";
+    document.getElementById("usernameDisplay").style.display = "none";
+  }
+}
+
+// =======================
+// POSTS
+// =======================
+
+function resetPosts() {
+  document.getElementById("posts-container").innerHTML = "";
+  currentPage = 1;
+  hasMorePosts = true;
+  loadPosts();
+}
+
+async function loadPosts() {
+  if (!hasMorePosts) return;
+
+  loadingPosts = true;
+  try {
+    const res = await axios.get(`${API_URL}/posts`, {
+      params: { page: currentPage },
+    });
+
     const posts = res.data.data;
-    totalPosts = res.data.meta?.total || totalPosts;
+    if (posts.length < postsPerPage) hasMorePosts = false;
 
     const container = document.getElementById("posts-container");
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const token = localStorage.getItem("token");
 
     posts.forEach((post) => {
       const card = document.createElement("div");
       card.className = "card shadow-sm mb-4";
-      let editBtn = "",
-        deleteBtn = "";
-      if (token && user.id === post.author.id) {
-        editBtn = `<i class="bi bi-pencil-square btn-edit text-primary me-2" style="cursor:pointer" data-id="${post.id}"></i>`;
-        deleteBtn = `<i class="bi bi-trash btn-delete text-danger" style="cursor:pointer" data-id="${post.id}"></i>`;
-      }
+
       card.innerHTML = `
-        <div class="card-header bg-white d-flex align-items-center justify-content-between">
-          <div>
-            <img src="${
-              post.author?.profile_image
-            }" alt="user" class="rounded-circle me-2" width="35" height="35"/>
-            <strong>@${post.author?.username}</strong>
-          </div>
-          <div>${editBtn}${deleteBtn}</div>
-        </div>
-        <div class="card-body">
+        <div class="card-body" style="min-height: 150px;">
+          <h5 class="card-title">${post.title || "Sans titre"}</h5>
+          <p class="card-text">${post.body}</p>
           ${
             post.image
-              ? `<img src="${post.image}" class="w-100 mb-3" style="height:300px;object-fit:cover"/>`
+              ? `<img src="${post.image}" class="img-fluid rounded mb-2" />`
               : ""
           }
-          <h6 class="text-muted mb-2">${post.created_at}</h6>
-          <h4>${post.title || "Sans titre"}</h4>
-          <p>${post.body || ""}</p>
-          <i class="bi bi-heart btn-like text-danger me-2" data-id="${
-            post.id
-          }" style="cursor:pointer;"></i>
-          <i class="bi bi-chat-left-text btn-comment text-primary" data-id="${
-            post.id
-          }" style="cursor:pointer;"></i>
-        </div>`;
+          <div>
+            <button class="btn btn-sm btn-outline-secondary me-2 btn-comment" data-id="${
+              post.id
+            }">
+              <i class="bi bi-chat"></i> Commentaires (${post.comments_count})
+            </button>
+            <button class="btn btn-sm btn-outline-success me-2 btn-share" data-id="${
+              post.id
+            }">
+              <i class="bi bi-share"></i> Share
+            </button>
+            ${
+              token && currentUser?.id === post.author.id
+                ? `<button class="btn btn-sm btn-outline-danger btn-delete" data-id="${post.id}">
+                    <i class="bi bi-trash"></i> Supprimer
+                  </button>`
+                : ""
+            }
+          </div>
+        </div>
+      `;
+
       container.appendChild(card);
     });
 
-    initLikeButtons();
-    initEditButtons();
-    initDeleteButtons();
-    initCommentButtons();
+    document
+      .querySelectorAll(".btn-comment")
+      .forEach((btn) =>
+        btn.addEventListener("click", () => openComments(btn.dataset.id))
+      );
+    document
+      .querySelectorAll(".btn-delete")
+      .forEach((btn) =>
+        btn.addEventListener("click", () => deletePost(btn.dataset.id))
+      );
+    document
+      .querySelectorAll(".btn-share")
+      .forEach((btn) =>
+        btn.addEventListener("click", () => sharePost(btn.dataset.id))
+      );
   } catch (err) {
-    console.error(err);
+    alert("Erreur chargement posts");
   }
-  isLoading = false;
+  loadingPosts = false;
+}
+
+// ----- Add post -----
+async function addPost(e) {
+  e.preventDefault();
+  const title = document.getElementById("title").value;
+  const body = document.getElementById("body").value;
+  const image = document.getElementById("image").files[0];
+
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("body", body);
+  if (image) formData.append("image", image);
+
+  try {
+    await axios.post(`${API_URL}/posts`, formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    bootstrap.Modal.getInstance(document.getElementById("postModal")).hide();
+    resetPosts();
+  } catch (err) {
+    alert("Erreur ajout post : " + err.response.data.message);
+  }
+}
+
+// ----- Delete post -----
+async function deletePost(postId) {
+  if (!confirm("Supprimer ce post ?")) return;
+  try {
+    await axios.delete(`${API_URL}/posts/${postId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    resetPosts();
+  } catch (err) {
+    alert("Erreur suppression : " + err.response.data.message);
+  }
+}
+
+// ----- Share post -----
+function sharePost(postId) {
+  const url = `${window.location.origin}?post=${postId}`;
+  navigator.clipboard.writeText(url);
+  alert("Lien copié : " + url);
+}
+
+// =======================
+// COMMENTS
+// =======================
+
+async function openComments(postId) {
+  selectedPostId = postId;
+  const list = document.getElementById("commentList");
+  list.innerHTML = "";
+
+  try {
+    const res = await axios.get(`${API_URL}/posts/${postId}`);
+    const comments = res.data.data.comments;
+
+    comments.forEach((c) => {
+      const li = document.createElement("li");
+      li.className = "list-group-item";
+      li.textContent = `${c.author.username}: ${c.body}`;
+      list.appendChild(li);
+    });
+
+    new bootstrap.Modal(document.getElementById("commentModal")).show();
+  } catch (err) {
+    alert("Erreur chargement commentaires");
+  }
+}
+
+async function addComment(e) {
+  e.preventDefault();
+  const body = document.getElementById("commentBody").value;
+
+  try {
+    await axios.post(
+      `${API_URL}/posts/${selectedPostId}/comments`,
+      { body },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    document.getElementById("commentBody").value = "";
+    openComments(selectedPostId);
+  } catch (err) {
+    alert("Erreur ajout commentaire : " + err.response.data.message);
+  }
+}
+
+// =======================
+// PROFILE
+// =======================
+async function loadProfile() {
+  try {
+    const res = await axios.get(`${API_URL}/users/${currentUser.id}`);
+    const user = res.data.data;
+
+    document.getElementById("profileUsername").innerText = user.name;
+    document.getElementById("profileEmail").innerText = user.email;
+    document.getElementById("postCount").innerText = user.posts_count;
+    document.getElementById("commentCount").innerText = user.comments_count;
+    document.getElementById("likeCount").innerText = user.likes_count;
+  } catch (err) {
+    alert("Erreur profil");
+  }
 }
